@@ -147,6 +147,10 @@ void ALaunchPadCharacter::Interact()
 {
 	if(bCanInteract)
 	{
+
+		/* Se que es una forma inneficiente de hacerlo, pero no pude encontrar
+		*  otra forma de obtener la referencia de las clases :(
+		*/
 		TSubclassOf<ALP_LaunchPlatform> ClassToFind;
 		ClassToFind = ALP_LaunchPlatform::StaticClass();
 		TArray<AActor*> ElementsFound;
