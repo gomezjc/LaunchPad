@@ -29,6 +29,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+
+protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Launch")
+	FVector LaunchVelocity;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	bool bCanInteract;
+	
 protected:
 
 	/** Resets HMD orientation in VR. */
@@ -58,8 +67,7 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Launch")
-	FVector LaunchVelocity;
+	void Interact();
 
 protected:
 	// APawn interface
@@ -72,6 +80,12 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	void LaunchCharacter(FVector Direction);
+	UFUNCTION(BlueprintCallable, Category = "Getter")
+	bool GetCanInteract() { return bCanInteract; }
+
+	UFUNCTION(BlueprintCallable, Category = "Setter")
+	void SetCanInteract(bool NewState) { bCanInteract = NewState; }
+
+	void LaunchPlayer(FVector Direction);
 };
 

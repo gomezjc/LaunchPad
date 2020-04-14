@@ -25,14 +25,25 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components")
 	class UStaticMeshComponent* MeshComponent;
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable,Category="Platform")
+	void BP_ChangePlatformState();
 
+public:
+	bool bIsPlatformOn;
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void ChangePlatformState();
+	
+	UFUNCTION(BlueprintCallable, Category="Getter")
+	bool GetPlatformOn() { return bIsPlatformOn; }
 
 	UFUNCTION()
 	void CheckPlayerEnter(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

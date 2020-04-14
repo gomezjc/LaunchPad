@@ -8,6 +8,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Public/LP_LaunchPlatform.h"
+#include "Public/LP_Panel.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ALaunchPadCharacter
@@ -56,6 +59,9 @@ void ALaunchPadCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ALaunchPadCharacter::Interact);
+
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ALaunchPadCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ALaunchPadCharacter::MoveRight);
@@ -132,7 +138,45 @@ void ALaunchPadCharacter::MoveRight(float Value)
 	}
 }
 
-void ALaunchPadCharacter::LaunchCharacter(FVector Direction)
+void ALaunchPadCharacter::LaunchPlayer(FVector Direction)
 {
 	Super::LaunchCharacter(Direction * LaunchVelocity, true, true);
+}
+
+void ALaunchPadCharacter::Interact()
+{
+	if(bCanInteract)
+	{
+		TSubclassOf<ALP_LaunchPlatform> ClassToFind;
+		ClassToFind = ALP_LaunchPlatform::StaticClass();
+		TArray<AActor*> ElementsFound;
+	
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, ElementsFound);
+
+		for (int32 iCollected = 0; iCollected < ElementsFound.Num(); ++iCollected)
+		{
+			ALP_LaunchPlatform* Platform = Cast<ALP_LaunchPlatform>(ElementsFound[iCollected]);
+
+			if (IsValid(Platform))
+			{
+				Platform->ChangePlatformState();
+			}
+		}
+
+		TSubclassOf<ALP_Panel> ClassToFindPanel;
+		ClassToFindPanel = ALP_Panel::StaticClass();
+		TArray<AActor*> ElementsFoundPanel;
+
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFindPanel, ElementsFoundPanel);
+
+		for (int32 iCollected = 0; iCollected < ElementsFoundPanel.Num(); ++iCollected)
+		{
+			ALP_Panel* ButtonPanel = Cast<ALP_Panel>(ElementsFoundPanel[iCollected]);
+
+			if (IsValid(ButtonPanel))
+			{
+				ButtonPanel->ChangeButtonState();
+			}
+		}
+	}
 }

@@ -25,6 +25,8 @@ ALP_LaunchPlatform::ALP_LaunchPlatform()
 	PlatformCollision->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	PlatformCollision->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 	PlatformCollision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+
+	bIsPlatformOn = false;
 }
 
 // Called when the game starts or when spawned
@@ -47,11 +49,17 @@ void ALP_LaunchPlatform::CheckPlayerEnter(UPrimitiveComponent* OverlappedCompone
 	{
 		ALaunchPadCharacter* OverlapCharacter = Cast<ALaunchPadCharacter>(OtherActor);
 
-		if (IsValid(OverlapCharacter))
+		if (IsValid(OverlapCharacter) && bIsPlatformOn)
 		{
-			OverlapCharacter->LaunchCharacter(SweepResult.Normal * -1);
+			OverlapCharacter->LaunchPlayer(SweepResult.Normal * -1);
 		}
 	}
+}
+
+void ALP_LaunchPlatform::ChangePlatformState()
+{
+	bIsPlatformOn = !bIsPlatformOn;
+	BP_ChangePlatformState();
 }
 
 
